@@ -21,7 +21,7 @@
 #ifndef XOS_PLATFORM_OS_LINUX_HPP
 #define XOS_PLATFORM_OS_LINUX_HPP
 
-#include "xos/platform/os.hpp"
+#include "xos/platform/types.hpp"
 
 namespace xos {
 namespace platform {

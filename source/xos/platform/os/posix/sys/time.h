@@ -25,6 +25,21 @@
 
 #include "xos/platform/os.h"
 
+#if defined(APPLEOSX)
+#if !defined(__MAC_OS_X_VERSION_MAX_ALLOWED_NO_POSIX_STRUCT_TIMESPEC)
+#define __MAC_OS_X_VERSION_MAX_ALLOWED_NO_POSIX_STRUCT_TIMESPEC __MAC_10_9
+#endif /*/ !defined(__MAC_OS_X_VERSION_MAX_ALLOWED_NO_POSIX_STRUCT_TIMESPEC) /*/
+#else /*/ defined(APPLEOSX) /*/
+#endif /*/ defined(APPLEOSX) /*/
+
+#if defined(APPLEOSX)
+#if (__MAC_OS_X_VERSION_MAX_ALLOWED <= __MAC_OS_X_VERSION_MAX_ALLOWED_NO_POSIX_STRUCT_TIMESPEC) 
+#define NO_HAS_POSIX_STRUCT_TIMESPEC
+#else /*/ (__MAC_OS_X_VERSION_MAX_ALLOWED <= __MAC_OS_X_VERSION_MAX_ALLOWED_NO_POSIX_STRUCT_TIMESPEC) /*/
+#endif /*/ (__MAC_OS_X_VERSION_MAX_ALLOWED <= __MAC_OS_X_VERSION_MAX_ALLOWED_NO_POSIX_STRUCT_TIMESPEC) /*/
+#else /*/ defined(APPLEOSX) /*/
+#endif /*/ defined(APPLEOSX) /*/
+
 #if defined(WINDOWS)
 /*/
 /// windows
@@ -38,7 +53,7 @@ enum {
 /// ...
 /// windows
 /*/
-#else /// defined(WINDOWS)
+#else /*/ defined(WINDOWS) /*/
 #if !defined(LINUX)
 /*/
 /// posix
@@ -50,7 +65,10 @@ enum {
 #endif /// defined(CLOCK_REALTIME)
 #define CLOCK_REALTIME PLATFORM_POSIX_CLOCK_REALTIME
 #define clockid_t platform_posix_clockid_t
+#if defined(NO_HAS_POSIX_STRUCT_TIMESPEC)
 #define timespec platform_posix_timespec
+#else /*/ defined(NO_HAS_POSIX_STRUCT_TIMESPEC) /*/ 
+#endif /*/ defined(NO_HAS_POSIX_STRUCT_TIMESPEC) /*/ 
 #define clock_gettime platform_posix_clock_gettime
 #define gettimeofday platform_posix_gettimeofday
 #define usleep platform_posix_usleep
@@ -58,12 +76,12 @@ enum {
 /// ...
 /// posix
 /*/
-#endif /// !defined(LINUX)
+#endif /*/ !defined(LINUX) /*/
 #endif /*/ defined(WINDOWS) /*/
 
 #if !defined(CLOCK_HAS_GETTIME)
 #define CLOCK_HAS_GETTIME
-#endif /// !defined(CLOCK_HAS_GETTIME)
+#endif /*/ !defined(CLOCK_HAS_GETTIME) /*/
 
 #if defined(__cplusplus)
 extern "C" {
@@ -79,11 +97,13 @@ typedef int clockid_t;
 enum {
     CLOCK_REALTIME = 0
 };/*/ enum clockid_t /*/
+#if defined(NO_HAS_POSIX_STRUCT_TIMESPEC)
 /*/ struct timespec /*/
 struct timespec {
         long    tv_sec;         /*/ seconds /*/
         long    tv_nsec;        /*/ nanoseconds /*/
 }; /*/ struct timespec /*/
+#endif /*/ defined(NO_HAS_POSIX_STRUCT_TIMESPEC) /*/
 extern int clock_gettime(clockid_t clk_id, struct timespec *res);
 extern int gettimeofday(struct timeval* tv, void* p);
 extern int usleep(useconds_t useconds);
@@ -91,7 +111,7 @@ extern int usleep(useconds_t useconds);
 /// ...
 /// posix
 /*/
-#endif /// !defined(LINUX)
+#endif /*/ !defined(LINUX) /*/
 
 #if defined(__cplusplus)
 } /*/ extern "C" /*/
